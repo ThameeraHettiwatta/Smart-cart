@@ -75,7 +75,10 @@ function goBack() {
                 if (value==secretPin){
                     window.location.href = "/checkout/"+Cookies.get('bill');
                 }
-                else{
+                else if (value==null){
+                    
+                }
+                else if (value!=secretPin){
                     swal(`Error. Incorrect code`, {
                         icon: "warning",
                         timer: 1500,
