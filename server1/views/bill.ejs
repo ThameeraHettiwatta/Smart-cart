@@ -3,6 +3,7 @@
     	<!--<link rel=stylesheet type=text/css href="/css/login.css">-->
       <script src="/js/js.cookie.js"></script>
             <script src="/js/jquery-min.js"></script>
+    <script src="/js/sweetalert.min.js"></script>
 
                    <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -56,12 +57,32 @@ function goBack() {
    	var secretPin = 666;
   $(document).ready(function(){
     $('#checkout').click(function(){
-    	if (prompt("Enter cashier pin code: ")==secretPin){
-    		window.location.href = "/checkout/"+Cookies.get('bill');
-    	}
-    	else{
-    		alert('Error. Incorrect cashier key');
-    	}
+        swal( {
+            content: {
+                element: "input",
+                attributes: {
+                    placeholder: "Enter cashier pn code",
+                    type: "password",
+                },
+            },
+            buttons: {
+                cancel: true,
+                confirm: true,
+            },
+        })
+            .then((value) => {
+
+                if (value==secretPin){
+                    window.location.href = "/checkout/"+Cookies.get('bill');
+                }
+                else{
+                    swal(`Error. Incorrect code`, {
+                        icon: "warning",
+                        timer: 1500,
+                        button: false,
+                    });
+                }
+            });
         });
     });
 
