@@ -1,0 +1,75 @@
+<html>
+<head>
+    	<!--<link rel=stylesheet type=text/css href="/css/login.css">-->
+      <script src="/js/js.cookie.js"></script>
+            <script src="/js/jquery-min.js"></script>
+
+                   <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+      <script type="text/javascript" src="/js/css-pop.js"></script>
+      <script src="/js/jquery-min.js"></script>
+      <script src="/js/js.cookie.js"></script>
+
+        <style>
+           body {
+              background: linear-gradient(to bottom right, white, rgb(216, 216, 216));
+          }
+        </style>
+
+</head>
+
+
+<body>
+
+
+ <div class="container"> 
+<h1 class="bg-success" style="color:white">My Bill</h1>
+
+<div class="container">
+<table class="table table-bordered table-striped">
+  <tr>
+    <th>Item</th>
+    <th>Quantity</th>
+  </tr>
+<%for (var i=0; i<items.length; i++){%>
+	<tr><td> <%= items[i].name%> </td>
+  <td><%= items[i].qty%></td></tr>> 
+<%}%>
+</table>
+</div>
+
+
+  <button class="btn btn-success" onclick="goBack()">Go Back</button>
+<script>
+
+function goBack() {
+    window.history.back();
+}
+</script>
+
+<!--cashiers only - checkout button-->
+   <script>
+   	var secretPin = 666;
+  $(document).ready(function(){
+    $('#checkout').click(function(){
+    	if (prompt("Enter cashier pin code: ")==secretPin){
+    		window.location.href = "/checkout/"+Cookies.get('bill');
+    	}
+    	else{
+    		alert('Error. Incorrect cashier key');
+    	}
+        });
+    });
+
+  </script>
+	<button id='checkout' class="btn btn-success">Checkout (cashiers only)</button>
+
+
+</div>
+</body>
+</html>
+

@@ -1,0 +1,182 @@
+<html>
+<head>
+        <!--firebase script-->
+ 
+        <script src="https://www.gstatic.com/firebasejs/4.12.1/firebase.js"></script> 
+    <script src="/js/firebaseCode.js"></script> 
+	<script src="/js/sweetalert.min.js"></script>
+    	<style media="screen" type="text/css">
+
+
+    		#blanket {
+				background-color:#111;
+				opacity: 0.65;
+				*background:none;
+				position:absolute;
+				z-index: 9001;
+				top:0px;
+				left:0px;
+				width:100%;
+				}
+
+				#popUpDiv {
+				position:absolute;
+				background:url(/images/map.jpg) no-repeat;
+				width:740px;
+				height:492px;
+				border:5px solid #000;
+				z-index: 9002;
+				}
+
+		</style>
+
+		   <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+			<script type="text/javascript" src="/js/css-pop.js"></script>
+			<script src="/js/jquery-min.js"></script>
+			<script src="/js/js.cookie.js"></script>
+
+
+			        <style>
+           body {
+              background: linear-gradient(to bottom right, white, rgb(216, 216, 216));
+          }
+        </style>
+
+
+</head>
+
+
+
+
+<body>
+<div class="container">
+<!--set cookie for user id-->
+<script>
+Cookies.set('user_id', <%=id%>, { path: '/' });
+</script>
+
+<div class="row">
+<!--isle map button-->
+<div class="col-md-1">
+<div id="blanket" style="display:none"></div>
+<div id="popUpDiv" style="display:none">
+
+<button onclick="popup('popUpDiv')" class="btn btn-success">Close</button>
+</div>
+<button onclick="popup('popUpDiv')" class="btn btn-success">Isle Map</button>
+</div>
+
+
+
+<!-- display user name-->
+<div class="col-md-11">
+<h3 class="bg-success" style="color:white">	 Welcome  <%= name %></h3>
+</div>
+</div>
+<!-- display ads-->
+<div class="w3-content w3-section" style="max-width:500px height:1000px">
+	<%for (i=0; i<adURLs.length; i++) {%>
+		<img class="mySlides" src="/images/<%=adURLs[i]%>" style="height:500px">
+	<%}%>
+
+</div>
+
+<!--javascript for slideshow-->
+<script>
+var slideIndex = 0;
+carousel();
+
+function carousel() {
+    var i;
+    var x = document.getElementsByClassName("mySlides");
+    for (i = 0; i < x.length; i++) {
+      x[i].style.display = "none"; 
+    }
+    slideIndex++;
+    if (slideIndex > x.length) {slideIndex = 1} 
+    x[slideIndex-1].style.display = "block"; 
+    setTimeout(carousel, 3000); // Change image every 2 seconds
+}
+</script>
+<br>
+
+
+
+
+<div class ="row">
+<!-- display self checkout mode-->
+<div class="col-md-3">
+<% if (priviledge==1){%>
+	<script>
+	$(document).ready(function(){
+    $('#self_checkout').click(function(){
+        $.post("/self_checkout",
+        {
+          id: <%=id%>
+        },
+        function(data,status){
+            swal("Welcome to self checkout mode. Scan a product and click add to cart to add an item to your shopping cart. You can view your cart at any time using the 'my cart' button.");
+            Cookies.set('self_checkout', 1, { path: '/' });
+            console.log(data);
+            Cookies.set('bill', data, { path: '/' });
+
+        });
+        	this.disabled = true;
+    });
+	});
+	</script>
+	<button id='self_checkout' class="btn btn-success">Enter Self Checkout Mode</button>
+</div>
+<%}%>
+
+
+
+<!-- display queue button-->
+<div class="col-md-3">
+
+<div>
+<script>
+	$(document).ready(function(){
+    $('#queue').click(function(){
+        $.post("/join_queue",
+        {
+          id: <%=id%>
+        },
+        function(data,status){
+            swal("You've been entered to the queue. You wil be notified when a counter is available. Click leave queue to exit from queue.");
+            Cookies.set('queued', 1, { path: '/' });
+        });
+        	this.disabled = true;
+    });
+	});
+	</script>
+	<button id='queue' class="btn btn-success">Join Queue</button>
+	</div>
+	</div>
+
+		<div class="col-md-3">
+	<button id="leave" class="btn btn-success">leave queue</button>  </div>
+
+   <script>
+  $(document).ready(function(){
+    $('#bill').click(function(){
+    window.location.href = "/view_bill/"+Cookies.get('bill');
+        });
+    });
+
+  </script>
+  <div class="col-md-3"> <button id="bill" class="btn btn-success">view cart</button></div>
+
+</div>
+</div>
+</div>
+	
+</body>
+</html>
+
+

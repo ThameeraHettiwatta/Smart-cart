@@ -1,0 +1,139 @@
+<!-- TODO: disable checkout button if prodID = 0
+-->
+
+<html>
+<head>
+    	<!--<link rel=stylesheet type=text/css href="/css/login.css">-->
+      <script src="/js/js.cookie.js"></script>
+              <!--firebase script-->
+ 
+              <script src="https://www.gstatic.com/firebasejs/4.12.1/firebase.js"></script> 
+              <script>
+              
+              
+          // Initialize Firebase
+          
+          var config = {
+            apiKey: "AIzaSyDiWj84GS73KW_R5qLTUpvTXVbIRUAuNsQ",
+            authDomain: "supercart-f83c1.firebaseapp.com",
+            databaseURL: "https://supercart-f83c1.firebaseio.com",
+            projectId: "supercart-f83c1",
+            storageBucket: "supercart-f83c1.appspot.com",
+            messagingSenderId: "122025235969"
+          };
+          var prodID=0;
+
+          firebase.initializeApp(config);
+          var database = firebase.database();
+            var count = 0
+            //get product key from firebase
+         	var productKeyRef = firebase.database().ref('products/').orderByKey().limitToLast(1);
+			productKeyRef.on('value', function(snapshot) {
+                count=count+1;
+				for (var pro in snapshot.val()){
+                    var key=snapshot.val()[pro]["name"];
+                    console.log(key);
+                    if (count>1){
+                        if (key== "signal"){
+                            prodID=2;
+                        } else if (key== "ambewela"){
+                            prodID=3;
+                        } else if (key== "sunlight"){
+                            prodID=1;
+                        }
+                        console.log(prodID)
+                        //check if the item is in bill
+                        $.post("/checkout",
+                        {
+                          id: prodID,
+                          bill: <%=bill%>
+                        },
+                        function(data,status){
+                            if (data=='valid'){
+                                swal("Item successfully verified.");
+                            }
+                            else{
+                                swal('Warning. Item not verified');
+                            }
+                        });
+                    }
+
+				}
+				
+					
+				 
+			});
+
+
+              </script> 
+            <script src="/js/jquery-min.js"></script>
+
+                           <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+      <script type="text/javascript" src="/js/css-pop.js"></script>
+      <script src="/js/jquery-min.js"></script>
+      <script src="/js/js.cookie.js"></script>
+               <style>
+           body {
+              background: linear-gradient(to bottom right, white, rgb(216, 216, 216));
+          }
+        </style>
+    <script src="/js/sweetalert.min.js"></script>
+</head>
+
+
+<body>
+	
+
+
+<!-- send post to verify products
+bill id must be passed to this page
+-->
+<h3 class="bg-success" style="color:white">Verification mode. Scan some items from the cart.</h3>
+<br>
+<div>
+<script>
+    //alternate code for verify button
+	//product id passed from barcode scanner. Hardcoded for now. Actual functionality: when item is scanned, the below post function is automatically called.
+	$(document).ready(function(){
+    $('#verify').click(function(){
+        console.log(prodID)
+        $.post("/checkout",
+        {
+          id: prodID,
+          bill: <%=bill%>
+        },
+        function(data,status){
+        	if (data=='valid'){
+            	swal("Item successfully verified.");
+        	}
+        	else{
+        		swal('Warning. Item not verified');
+        	}
+        });
+    });
+	});
+
+
+	//finalize bill function
+  $(document).ready(function(){
+    $('#email').click(function(){
+    window.location.href = "/finalize/"+Cookies.get('bill');
+        });
+    });
+    </script>
+    
+
+	
+	<button id='email' class="btn btn-success">finalize and email bill</button>	
+</div>
+
+
+
+
+</body>
+</html>
