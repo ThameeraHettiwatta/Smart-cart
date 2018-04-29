@@ -58,18 +58,47 @@ function goBack() {
 
   $(document).ready(function(){
     $('#add').click(function(){
-      var qty = prompt("Enter Quantity: ", 1);
-        $.post("/add_items",
-        {
-          user_id: Cookies.get("user_id"),
-          id: <%=product.id%>,
-          qty: qty,
-          bill: Cookies.get('bill')
-        },
-        function(data,status){
-            swal("Added to cart");
+        function getQty(value) {
+            return value;
+        }
+        swal( {
+            content: {
+                element: "input",
+                attributes: {
+                    placeholder: "Enter Quantity",
+                    type: "number",
+                },
+            },
+            buttons: {
+                cancel: true,
+                confirm: true,
+            },
+        })
 
-        });
+                .then((value) => {
+                    if(value>0) {
+                        swal(`You have added ${value} to cart`, {
+                            icon: "success",
+                            timer: 1500,
+                            button: false,
+                        });
+                        $.post("/add_items",
+                            {
+                                user_id: Cookies.get("user_id"),
+                                id: <%=product.id%>,
+                                qty: value,
+                                bill: Cookies.get('bill')
+                            },
+                            function(data,status){
+                                swal("Added to cart");
+
+                            });
+                    }
+                });
+
+
+      //var qty = prompt("Enter Quantity: ", 1);
+
     });
   });
   </script>
@@ -91,10 +120,18 @@ function goBack() {
         function(data,status){
           console.log(status);
           if (data=='success'){
-            swal("Removed from cart");
+            swal("Removed from cart", {
+                icon: "success",
+                timer: 1500,
+                button: false,
+            });
           }
             else{
-              swal("Item not in cart");
+              swal("Item not in cart", {
+                  icon: "warning",
+                  timer: 1500,
+                  button: false,
+              });
             }
           });
 
